@@ -2,8 +2,9 @@ const express = require('express');
 const puppeteer = require('puppeteer');
 const app = express();
 const fs = require("fs")
-
-
+function reverse(s){
+    return s.split("").reverse().join("");
+}
 app.get('/crawl', async (req, res) => {
     const browser = await puppeteer.launch({ headless: false });
     const page = await browser.newPage();
@@ -35,6 +36,16 @@ app.get('/crawl', async (req, res) => {
         })
     }
     const result = [].concat(...articlesEachPage);
+    for(let i = 0; i < result.length; i++){
+        let tempName = result[i].name;
+        result[i].author = tempName.substring(0, tempName.indexOf("-"));
+        tempName = tempName.substring(tempName.indexOf("-") + 1, tempName.length);
+        tempName = reverse(tempName);
+        result[i].type = tempName.substring(0, tempName.indexOf("-"));
+        result[i].type = reverse(result[i].type);
+        tempName = reverse(tempName.substring(tempName.indexOf("-") + 1, tempName.length));
+        result[i].title = tempName;
+    }
     await browser.close();
     res.send(result);
 })
