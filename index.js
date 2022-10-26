@@ -46,6 +46,12 @@ app.get('/crawl', async (req, res) => {
         tempName = reverse(tempName.substring(tempName.indexOf("-") + 1, tempName.length));
         result[i].title = tempName;
     }
+    // eliminate if type is ""
+    result.forEach((item, index) => {
+        if(item.type === ""){
+            result.splice(index, 1);
+        }
+    })
     await browser.close();
     res.send(result);
 })
